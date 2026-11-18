@@ -1,23 +1,49 @@
-import logo from './logo.svg';
+
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { increase, decrease, addProduct } from './store';
 import './App.css';
 
 function App() {
+  const products = useSelector(state => state.cart);
+  const dispatch = useDispatch();
+
+  const handleAdd = () => {
+    const title = prompt('Введите название товара:');
+
+    if (title && title.trim()) {
+      dispatch(addProduct(title.trim()));
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <h1>Корзина товаров</h1>
+
+      {products.map(product => (
+        <div className="product" key={product.id}>
+          <span>{product.title}</span>
+
+          <div className="controls">
+            <button
+              onClick={() => dispatch(increase(product.id))}
+              disabled={product.count === 25}
+            >
+              +
+            </button>
+
+            <span>{product.count}</span>
+
+            <button onClick={() => dispatch(decrease(product.id))}>
+              -
+            </button>
+          </div>
+        </div>
+      ))}
+
+      <button className="add-button" onClick={handleAdd}>
+        Добавить товар
+      </button>
     </div>
   );
 }
